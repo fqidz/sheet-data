@@ -44,6 +44,7 @@ with st.form(key="printing_input"):
             printing_input = pd.DataFrame(
                 [
                     {
+                        "Printed": "FALSE",
                         "Name": name,
                         "B & W": no_of_black_and_white,
                         "Colored": no_of_colored,
