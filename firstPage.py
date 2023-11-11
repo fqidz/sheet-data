@@ -47,7 +47,7 @@ with st.form(key="printing_input"):
                         "Name": name,
                         "B & W": no_of_black_and_white,
                         "Colored": no_of_colored,
-                        "File Name": file.name
+                        "File Name": file.name,
                         "Note": note
                         
                     }
