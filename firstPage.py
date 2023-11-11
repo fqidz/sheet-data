@@ -1,6 +1,8 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
+import gspread as gs
+import gspread_dataframe as gd
 
 st.set_page_config(page_title="Printing", page_icon=":printer:", layout="centered")
 
@@ -45,13 +47,17 @@ with st.form(key="printing_input"):
                         "Name": name,
                         "B & W": no_of_black_and_white,
                         "Colored": no_of_colored,
-                        "File Name": file.__str__
+                        "File Name": file.name
                         
                     }
                 ]
             )
 
+            gc = gs.service_account(filename=".streamlit/sheetsKey.json")
+            sh = gc.open("COPY_PRINTING BUSINESS!!!1")
+            ws = sh.worksheet("Sheet1") # get the worksheet object by name
+            existing = gd.get_as_dataframe(ws) # get the existing data as a DataFrame
+            updated = existing.append(printing_input) # append the new data to the existing data
+            gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
             
-
-
-
+            st.success("Your data has been added to the Google sheet")
