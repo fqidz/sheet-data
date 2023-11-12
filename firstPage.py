@@ -39,20 +39,23 @@ with st.form(key="printing_input"):
     # form
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
     
-    check_black_and_white = st.checkbox(label="Black & White")
-    if check_black_and_white:
-        st.write("balls")
+
+    ink_type = st.radio(
+    "Select Ink Type :red[\*]",
+    ["Colored", "Black & White"],
+    captions = ["100 fils per page", "50 fils per page"],
+    index=None)
+
     
-    no_of_black_and_white = st.number_input(label='''Number of Black & White Pages :red[\*]''',step=1)
-    no_of_colored = st.number_input(label='''Number of Colored Pages :red[\*]''',step=1)
-    uploaded_file = st.file_uploader(label='''PDF :red[\*]''', type=["pdf"])
+    no_of_pages = st.number_input(label='''Number of Pages :red[\*]''',step=1)
+    uploaded_file = st.file_uploader(label='''PDF File :red[\*]''', type=["pdf"])
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
     st.markdown(''':red[*\* required*]''')
     
     submit_button = st.form_submit_button(use_container_width=True)
     if submit_button:
         # check if required info is filled
-        if not name or not uploaded_file or (not no_of_black_and_white and not no_of_colored):
+        if not name or not uploaded_file or not no_of_pages or not ink_type:
             st.warning("Please fill in the required information")
             st.stop()
         else:
@@ -66,19 +69,35 @@ with st.form(key="printing_input"):
                 gfile.Upload()
 
             # create new row with data
-            printing_input = pd.DataFrame(
-                [
-                    {
-                        "Printed": "FALSE",
-                        "Name": name,
-                        "B & W": no_of_black_and_white,
-                        "Colored": no_of_colored,
-                        "File Name": uploaded_file.name,
-                        "Note": note
-                        
-                    }
-                ]
-            )
+            
+            if ink_type == "Colored":
+                printing_input = pd.DataFrame(
+                    [
+                        {
+                            "Printed": "FALSE",
+                            "Name": name,
+                            "B & W": 0,
+                            "Colored": no_of_pages,
+                            "File Name": uploaded_file.name,
+                            "Note": note
+                            
+                        }
+                    ]
+                )
+            else:
+                printing_input = pd.DataFrame(
+                    [
+                        {
+                            "Printed": "FALSE",
+                            "Name": name,
+                            "B & W": no_of_pages,
+                            "Colored": 0,
+                            "File Name": uploaded_file.name,
+                            "Note": note
+                            
+                        }
+                    ]
+                )
 
             # append to google sheets
             sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
