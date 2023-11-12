@@ -20,17 +20,17 @@ st.title("Printing Form")
 
 # --- TABLE ---
 
-conn = st.connection("gsheets", type=GSheetsConnection)
+# conn = st.connection("gsheets", type=GSheetsConnection)
 
-data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
+# data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
 
 
-st.subheader("Google Sheet")
-st.dataframe(data, hide_index=True)
-st.markdown("""---""")
+# st.subheader("Google Sheet")
+# st.dataframe(data, hide_index=True)
+# st.markdown("""---""")
 
 # --- INPUT SECTION ---
-st.subheader("Input data")
+# st.subheader("Input data")
 
 cache_button = st.button(label='clear cache')
 if cache_button:
@@ -53,10 +53,10 @@ with st.form(key="printing_input"):
             st.stop()
         else:
             if uploaded_file is not None:
-                
+                # upload file to gdrive
                 with NamedTemporaryFile(delete=False) as temp:
                     temp.write(uploaded_file.getvalue())
-                folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe"
+                folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
                 gfile = drive.CreateFile({"title": uploaded_file.name, "parents": [{"id": folder_id}]})
                 gfile.SetContentFile(temp.name)
                 gfile.Upload()
