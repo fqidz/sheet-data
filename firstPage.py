@@ -38,6 +38,11 @@ st.title("Printing Form")
 with st.form(key="printing_input"):
     # form
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
+    
+    check_black_and_white = st.checkbox(label="Black & White")
+    if check_black_and_white:
+        st.write("balls")
+    
     no_of_black_and_white = st.number_input(label='''Number of Black & White Pages :red[\*]''',step=1)
     no_of_colored = st.number_input(label='''Number of Colored Pages :red[\*]''',step=1)
     uploaded_file = st.file_uploader(label='''PDF :red[\*]''', type=["pdf"])
