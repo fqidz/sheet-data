@@ -7,8 +7,6 @@ import pydrive2
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 
-st. cache_data. clear()
-
 gauth = pydrive2.auth.GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
 gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('.streamlit/sheetsKey.json', scope)
@@ -33,6 +31,10 @@ st.markdown("""---""")
 
 # --- INPUT SECTION ---
 st.subheader("Input data")
+
+cache_button = st.button(label='clear cache')
+if cache_button:
+    st.cache_data.clear()
 
 with st.form(key="printing_input"):
     # form
