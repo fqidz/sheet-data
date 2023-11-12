@@ -3,14 +3,15 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import gspread as gs
 import gspread_dataframe as gd
-import pydrive2
+from pydrive2.auth import GoogleAuth
+from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 
-gauth = pydrive2.auth.GoogleAuth()
+gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
 gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('.streamlit/sheetsKey.json', scope)
-drive = pydrive2.drive.GoogleDrive(gauth)
+drive = GoogleDrive(gauth)
 
 st.set_page_config(page_title="Printing", page_icon=":printer:", layout="centered")
 
