@@ -8,8 +8,6 @@ from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 
-st.cache(ttl=5)
-
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
 gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('.streamlit/sheetsKey.json', scope)
