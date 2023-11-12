@@ -10,7 +10,9 @@ from tempfile import NamedTemporaryFile
 
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
-gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('.streamlit/sheetsKey.json', scope)
+gauth.credentials = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gsheets"]["sheet_service_account"], scope)
+gc = gs.authorize(gauth.credentials) # link service acc
+
 drive = GoogleDrive(gauth)
 
 st.set_page_config(page_title="Printing", page_icon=":printer:", layout="centered")
@@ -74,7 +76,6 @@ with st.form(key="printing_input"):
             )
 
             # append to google sheets
-            gc = gs.service_account(filename=".streamlit/sheetsKey.json") # link service acc
             sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
             ws = sh.worksheet("Sheet1") # get the worksheet
             existing = gd.get_as_dataframe(ws) # get the existing data as a DataFrame
