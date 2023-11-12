@@ -1,3 +1,9 @@
+## TODO
+## directly link file to google sheets
+## fix discord embed
+## customize shit or something
+## 
+
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 import pandas as pd
@@ -57,7 +63,7 @@ with st.form(key="printing_input"):
     if submit_button:
         # check if required info is filled
         if not name or not uploaded_file or not no_of_pages or not ink_type:
-            st.warning("Please fill in the required information")
+            st.warning("Please fill in the required information.")
             st.stop()
         else:
             if uploaded_file is not None:
