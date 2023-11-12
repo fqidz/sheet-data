@@ -7,6 +7,7 @@ from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
+from datetime import datetime
 
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
@@ -15,7 +16,7 @@ gc = gs.authorize(gauth.credentials) # link service acc
 
 drive = GoogleDrive(gauth)
 
-st.set_page_config(page_title="Printing", page_icon=":printer:", layout="centered")
+st.set_page_config(page_title="Faidz Printing", page_icon=":printer:", layout="centered")
 
 
 # --- HEADER SECTION ---
@@ -70,10 +71,13 @@ with st.form(key="printing_input"):
 
             # create new row with data
             
+            date_now = datetime.today().strftime('%Y-%m-%d')
+
             if ink_type == "Colored":
                 printing_input = pd.DataFrame(
                     [
                         {
+                            "Date": date_now,
                             "Printed": "FALSE",
                             "Name": name,
                             "B & W": 0,
@@ -88,6 +92,7 @@ with st.form(key="printing_input"):
                 printing_input = pd.DataFrame(
                     [
                         {
+                            "Date": date_now,
                             "Printed": "FALSE",
                             "Name": name,
                             "B & W": no_of_pages,
