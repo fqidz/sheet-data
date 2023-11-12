@@ -1,6 +1,5 @@
 streamlit
 pandas
 st-gsheets-connection
-pydrive
+PyDrive
 oauth2client
-tempfile
