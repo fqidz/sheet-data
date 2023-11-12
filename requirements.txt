@@ -3,3 +3,4 @@ pandas
 st-gsheets-connection
 pydrive
 oauth2client
+tempfile
