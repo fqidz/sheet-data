@@ -32,10 +32,6 @@ st.title("Printing Form")
 # --- INPUT SECTION ---
 # st.subheader("Input data")
 
-cache_button = st.button(label='clear cache')
-if cache_button:
-    st.cache_data.clear()
-
 with st.form(key="printing_input"):
     # form
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
