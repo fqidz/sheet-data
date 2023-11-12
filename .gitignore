@@ -1,3 +1,1 @@
-.streamlit
-secrets.toml
-sheetsKey.json
+/workspaces/sheet-data/.streamlit/
