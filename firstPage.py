@@ -3,12 +3,21 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import gspread as gs
 import gspread_dataframe as gd
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from oauth2client.service_account import ServiceAccountCredentials
+
+
+gauth = GoogleAuth()
+scope = ["https://www.googleapis.com/auth/drive"]
+gauth.credentials = ServiceAccountCredentials.from_json_keyfile_name('.streamlit/sheetsKey.json', scope)
+drive = GoogleDrive(gauth)
 
 st.set_page_config(page_title="Printing", page_icon=":printer:", layout="centered")
 
 
 # --- HEADER SECTION ---
-st.title("Printing Thingymajig")
+st.title("Printing Form")
 
 # --- TABLE ---
 
@@ -28,7 +37,7 @@ with st.form(key="printing_input"):
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
     no_of_black_and_white = st.number_input(label='''Number of Black & White Pages :red[\*]''',step=1)
     no_of_colored = st.number_input(label='''Number of Colored Pages :red[\*]''',step=1)
-    file = st.file_uploader(label='''File :red[\*]''')
+    uploaded_file = st.file_uploader(label='''File :red[\*]''')
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
     st.markdown(''':red[*\* required*]''')
 
@@ -40,6 +49,11 @@ with st.form(key="printing_input"):
             st.warning("Please fill in the required information")
             st.stop()
         else:
+            if uploaded_file is not None:
+                gfile = drive.CreateFile()
+                gfile.SetContentString(uploaded_file.getvalue())
+                gfile.Upload()
+            
             # create new row with data
             printing_input = pd.DataFrame(
                 [
@@ -48,7 +62,7 @@ with st.form(key="printing_input"):
                         "Name": name,
                         "B & W": no_of_black_and_white,
                         "Colored": no_of_colored,
-                        "File Name": file.name,
+                        "File Name": uploaded_file.name,
                         "Note": note
                         
                     }
