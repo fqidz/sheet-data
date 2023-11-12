@@ -3,7 +3,6 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import gspread as gs
 import gspread_dataframe as gd
-import pydrive2
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 
