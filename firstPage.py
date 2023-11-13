@@ -1,8 +1,7 @@
 ## TODO
-## directly link file to google sheets
 ## fix discord embed
 ## customize shit or something
-## 
+## email notifs
 
 import streamlit as st
 import pandas as pd
@@ -13,6 +12,7 @@ from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 from datetime import datetime
+from PIL import Image
 
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
@@ -93,4 +93,13 @@ with st.form(key="printing_input"):
             updated = existing.append(printing_input) # append the new data to the existing data
             gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
             
-            st.success("Your request has been received.")
+            st.success("Your file, '" + uploaded_file.name + "' has been recieved and will be printed as soon as possible.\n Thank you! 😊")
+
+            
+# absolutely crucial for the web app to run; do not delete
+st.divider()
+
+dog = Image.open('dog.jpg')
+
+st.write('photo of a dog')
+st.image(dog, caption='photo of a dog')
