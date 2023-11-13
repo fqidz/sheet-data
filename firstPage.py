@@ -5,7 +5,6 @@
 ## 
 
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import gspread as gs
 import gspread_dataframe as gd
@@ -28,19 +27,7 @@ st.set_page_config(page_title="Faidz Printing", page_icon=":printer:", layout="c
 # --- HEADER SECTION ---
 st.title("Printing Form")
 
-# --- TABLE ---
-
-# conn = st.connection("gsheets", type=GSheetsConnection)
-
-# data = conn.read(worksheet="Sheet1", usecols=list(range(8)), ttl=5)
-
-
-# st.subheader("Google Sheet")
-# st.dataframe(data, hide_index=True)
-# st.markdown("""---""")
-
 # --- INPUT SECTION ---
-# st.subheader("Input data")
 
 with st.form(key="printing_input"):
     # form
@@ -74,41 +61,30 @@ with st.form(key="printing_input"):
                 gfile = drive.CreateFile({"title": uploaded_file.name, "parents": [{"id": folder_id}]})
                 gfile.SetContentFile(temp.name)
                 gfile.Upload()
+                
+                file_link = gfile['alternateLink']
 
             # create new row with data
             
             date_now = datetime.today().strftime('%Y-%m-%d')
+            
+            printing_input = pd.DataFrame(
+                [
+                    {
+                        "Date": date_now,
+                        "Printed": "NO",
+                        "Name": name,
+                        "File Name": uploaded_file.name,
+                        "File Link": file_link,
+                        "Colored": no_of_pages if ink_type == "Colored" else 0,
+                        "B & W": no_of_pages if ink_type != "Colored" else 0,
+                        "Note": note
+                        
+                    }
+                ]
+            )
 
-            if ink_type == "Colored":
-                printing_input = pd.DataFrame(
-                    [
-                        {
-                            "Date": date_now,
-                            "Printed": "FALSE",
-                            "Name": name,
-                            "B & W": 0,
-                            "Colored": no_of_pages,
-                            "File Name": uploaded_file.name,
-                            "Note": note
-                            
-                        }
-                    ]
-                )
-            else:
-                printing_input = pd.DataFrame(
-                    [
-                        {
-                            "Date": date_now,
-                            "Printed": "FALSE",
-                            "Name": name,
-                            "B & W": no_of_pages,
-                            "Colored": 0,
-                            "File Name": uploaded_file.name,
-                            "Note": note
-                            
-                        }
-                    ]
-                )
+
 
             # append to google sheets
             sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
