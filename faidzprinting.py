@@ -3,6 +3,7 @@
 ## customize shit or something
 ## email notifs
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
+## auto get pages from just pdf, no need input
 
 import streamlit as st
 import pandas as pd
