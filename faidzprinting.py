@@ -100,7 +100,15 @@ with st.form(key="printing_input"):
             updated = existing.append(printing_input) # append the new data to the existing data
             gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
             
-            summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}'''.format(uploaded_file.name, ink_type, no_of_pages)
+            #calculate price
+            if ink_type == "Colored":
+                total_price = (no_of_pages * 100)/1000
+            else:
+                total_price = (no_of_pages * 50)/1000
+
+            total_price = 'BHD {:.3f}'.format(total_price)
+            
+            summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}\nTotal Price: {}'''.format(uploaded_file.name, ink_type, no_of_pages, total_price)
 
             st.code(summary,language="yaml")
             st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
