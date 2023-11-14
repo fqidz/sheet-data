@@ -16,6 +16,7 @@ from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 from datetime import datetime
+import pypdf
 
 
 gauth = GoogleAuth()
@@ -45,30 +46,33 @@ with st.form(key="printing_input"):
     index=None)
 
     
-    no_of_pages = st.number_input(label='''Number of Pages :red[\*]''',step=1)
+
     uploaded_file = st.file_uploader(label='''PDF File :red[\*]''', type=["pdf"])
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
+
     
     submit_button = st.form_submit_button(use_container_width=True)
     if submit_button:
         # check if required info is filled
-        if not name or not uploaded_file or not no_of_pages or not ink_type:
+        if not name or not uploaded_file or not ink_type:
             st.warning("Please fill in the required information.")
             st.stop()
         else:
-            if uploaded_file is not None:
-                # upload file to gdrive
-                with NamedTemporaryFile(delete=False) as temp:
-                    temp.write(uploaded_file.getvalue())
-                folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
-                gfile = drive.CreateFile({"title": uploaded_file.name, "parents": [{"id": folder_id}]})
-                gfile.SetContentFile(temp.name)
-                gfile.Upload()
-                
-                file_link = gfile['alternateLink']
+            # upload file to gdrive
+            with NamedTemporaryFile(delete=False) as temp:
+                temp.write(uploaded_file.getvalue())
+            folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
+            gfile = drive.CreateFile({"title": uploaded_file.name, "parents": [{"id": folder_id}]})
+            gfile.SetContentFile(temp.name)
+            gfile.Upload()
+            
+            file_link = gfile['alternateLink']
+
+            with open(temp.name, 'rb'):
+                pdfReader = pypdf.PdfReader(uploaded_file)
+                no_of_pages = len(pdfReader.pages)
 
             # create new row with data
-            
             date_now = datetime.today().strftime('%Y-%m-%d')
             
             printing_input = pd.DataFrame(
@@ -96,6 +100,9 @@ with st.form(key="printing_input"):
             updated = existing.append(printing_input) # append the new data to the existing data
             gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
             
-            st.success("Your file, '" + uploaded_file.name + "' has been recieved and will be printed as soon as possible.\n Thank you! 😊")
+            summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}'''.format(uploaded_file.name, ink_type, no_of_pages)
+
+            st.code(summary,language="yaml")
+            st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
 
             
