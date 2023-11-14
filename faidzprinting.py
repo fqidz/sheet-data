@@ -51,7 +51,6 @@ with st.form(key="printing_input"):
 
     
     submit_button = st.form_submit_button(use_container_width=True)
-    st.divider()
 
     if submit_button:
         # check if required info is filled
@@ -59,6 +58,7 @@ with st.form(key="printing_input"):
             st.warning("Please fill in the required information.")
             st.stop()
         else:
+            st.divider()
             # upload file to gdrive
             with NamedTemporaryFile(delete=False) as temp:
                 temp.write(uploaded_file.getvalue())
