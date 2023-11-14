@@ -58,7 +58,6 @@ with st.form(key="printing_input"):
             st.warning("Please fill in the required information.")
             st.stop()
         else:
-            st.divider()
             # upload file to gdrive
             with NamedTemporaryFile(delete=False) as temp:
                 temp.write(uploaded_file.getvalue())
@@ -101,6 +100,8 @@ with st.form(key="printing_input"):
             updated = existing.append(printing_input) # append the new data to the existing data
             gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
             
+            st.divider()
+
             #calculate price
             if ink_type == "Colored":
                 total_price = (no_of_pages * 100)/1000
