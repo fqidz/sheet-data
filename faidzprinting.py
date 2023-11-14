@@ -4,6 +4,7 @@
 ## email notifs
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
 ## auto get pages from just pdf, no need input
+## upload multiple files
 
 import streamlit as st
 import pandas as pd
@@ -99,9 +100,9 @@ with st.form(key="printing_input"):
 
             
 # absolutely crucial for the web app to run; do not delete
-st.divider()
+#st.divider()
 
-dog = Image.open('dog.jpg')
+#dog = Image.open('dog.jpg')
 
-st.write('photo of a dog')
-st.image(dog, caption='photo of a dog')
+#st.write('photo of a dog')
+#st.image(dog, caption='photo of a dog')
