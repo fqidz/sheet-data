@@ -4,7 +4,8 @@
 ## email notifs
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
 ## auto get pages from just pdf, no need input
-## upload multiple files
+## allow upload multiple files
+##      maybe by allowing them to have multiple forms
 
 import streamlit as st
 import pandas as pd
@@ -15,7 +16,7 @@ from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from tempfile import NamedTemporaryFile
 from datetime import datetime
-from PIL import Image
+
 
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
@@ -47,7 +48,6 @@ with st.form(key="printing_input"):
     no_of_pages = st.number_input(label='''Number of Pages :red[\*]''',step=1)
     uploaded_file = st.file_uploader(label='''PDF File :red[\*]''', type=["pdf"])
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
-    st.markdown(''':red[*\* required*]''')
     
     submit_button = st.form_submit_button(use_container_width=True)
     if submit_button:
@@ -99,10 +99,3 @@ with st.form(key="printing_input"):
             st.success("Your file, '" + uploaded_file.name + "' has been recieved and will be printed as soon as possible.\n Thank you! 😊")
 
             
-# absolutely crucial for the web app to run; do not delete
-#st.divider()
-
-#dog = Image.open('dog.jpg')
-
-#st.write('photo of a dog')
-#st.image(dog, caption='photo of a dog')
