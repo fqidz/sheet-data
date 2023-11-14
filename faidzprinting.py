@@ -3,7 +3,6 @@
 ## customize shit or something
 ## email notifs
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
-## auto get pages from just pdf, no need input
 ## allow upload multiple files
 ##      maybe by allowing them to have multiple forms
 
@@ -52,6 +51,8 @@ with st.form(key="printing_input"):
 
     
     submit_button = st.form_submit_button(use_container_width=True)
+    st.divider()
+
     if submit_button:
         # check if required info is filled
         if not name or not uploaded_file or not ink_type:
