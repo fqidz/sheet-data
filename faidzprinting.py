@@ -32,82 +32,111 @@ st.set_page_config(page_title="Faidz Printing", page_icon=":printer:", layout="c
 # --- HEADER SECTION ---
 st.title("Printing Form")
 
+# --- CONTENT ---
+## TODO
+
+st.info("You can upload multiple files now! 🎉")
+
 # --- INPUT SECTION ---
 
-with st.form(key="printing_input"):
+def ink_choice(key):    
+    st.radio(
+    "{} :red[\*]".format(single_file.name),
+    ["Colored", "Black & White"],
+    index=None,key=key)
+
+
+with st.expander(label='Form'):
     # form
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
     
-    ink_type = st.radio(
-    "Select Ink Type :red[\*]",
-    ["Colored", "Black & White"],
-    captions = ["100 fils per page", "50 fils per page"],
-    index=None)
+    uploaded_file = st.file_uploader(label='''PDF File(s) :red[\*]''', type=["pdf"],accept_multiple_files=True)
 
-    uploaded_file = st.file_uploader(label='''PDF File :red[\*]''', type=["pdf"])
+
+    st.write('Choose Ink Type:')
+
+    # ink type choice
+    col1, col2, col3 = st.columns(3)
+    columns = [col1, col2, col3]
+    ink_types = []
+
+    for index, single_file in enumerate(uploaded_file):
+        with columns[(index % 3)]:
+            ink = ink_choice(index)
+            ink_types.append(ink)
+
+
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
+    submit_button = st.button(label='Submit', use_container_width=True)
 
-    
-    submit_button = st.form_submit_button(use_container_width=True)
+    st.write(ink_types)
 
     if submit_button:
         # check if required info is filled
-        if not name or not uploaded_file or not ink_type:
+        if not name or not uploaded_file or not ink_types:
             st.warning("Please fill in the required information.")
             st.stop()
         else:
-            # upload file to gdrive
-            with NamedTemporaryFile(delete=False) as temp:
-                temp.write(uploaded_file.getvalue())
-            folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
-            gfile = drive.CreateFile({"title": uploaded_file.name, "parents": [{"id": folder_id}]})
-            gfile.SetContentFile(temp.name)
-            gfile.Upload()
+            pass
             
-            file_link = gfile['alternateLink']
-
-            with open(temp.name, 'rb'):
-                pdfReader = pypdf.PdfReader(uploaded_file)
-                no_of_pages = len(pdfReader.pages)
-
-            # create new row with data
-            date_now = datetime.today().strftime('%Y-%m-%d')
             
-            printing_input = pd.DataFrame(
-                [
-                    {
-                        "Date": date_now,
-                        "Printed": "NO",
-                        "Name": name,
-                        "File Name": uploaded_file.name,
-                        "File Link": file_link,
-                        "Colored": no_of_pages if ink_type == "Colored" else 0,
-                        "B & W": no_of_pages if ink_type != "Colored" else 0,
-                        "Note": note
+            
+            
+            
+            
+            # # upload file to gdrive
+            # with NamedTemporaryFile(delete=False) as temp:
+            #     temp.write(uploaded_file.getvalue())
+            # folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
+            # gfile = drive.CreateFile({"title": uploaded_file.name, "parents": [{"id": folder_id}]})
+            # gfile.SetContentFile(temp.name)
+            # gfile.Upload()
+            
+            # file_link = gfile['alternateLink']
+
+            # with open(temp.name, 'rb'):
+            #     pdfReader = pypdf.PdfReader(uploaded_file)
+            #     no_of_pages = len(pdfReader.pages)
+
+            # # create new row with data
+            # date_now = datetime.today().strftime('%Y-%m-%d')
+            
+            # printing_input = pd.DataFrame(
+            #     [
+            #         {
+            #             "Date": date_now,
+            #             "Printed": "NO",
+            #             "Name": name,
+            #             "File Name": uploaded_file.name,
+            #             "File Link": file_link,
+            #             "Colored": no_of_pages if ink_types == "Colored" else 0,
+            #             "B & W": no_of_pages if ink_types != "Colored" else 0,
+            #             "Note": note
                         
-                    }
-                ]
-            )
+            #         }
+            #     ]
+            # )
 
 
-            # append to google sheets
-            sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
-            ws = sh.worksheet("Sheet1") # get the worksheet
-            existing = gd.get_as_dataframe(ws) # get the existing data as a DataFrame
-            updated = existing.append(printing_input) # append the new data to the existing data
-            gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
+            # # append to google sheets
+            # sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
+            # ws = sh.worksheet("Sheet1") # get the worksheet
+            # existing = gd.get_as_dataframe(ws) # get the existing data as a DataFrame
+            # updated = existing.append(printing_input) # append the new data to the existing data
+            # gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
             
-            st.divider()
+            # st.divider()
 
-            #calculate price
-            if ink_type == "Colored":
-                total_price = (no_of_pages * 100)/1000
-            else:
-                total_price = (no_of_pages * 50)/1000
+            # #calculate price
+            # if ink_types == "Colored":
+            #     total_price = (no_of_pages * 100)/1000
+            # else:
+            #     total_price = (no_of_pages * 50)/1000
 
-            total_price = 'BHD {:.3f}'.format(total_price)
+            # total_price = 'BHD {:.3f}'.format(total_price)
             
 
-            summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}\nTotal Price: {}'''.format(uploaded_file.name, ink_type, no_of_pages, total_price)
-            st.code(summary,language="yaml")
-            st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
+            # # do this as expanded
+            # summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}\nTotal Price: {}'''.format(uploaded_file.name, ink_types, no_of_pages, total_price)
+            # st.code(summary,language="yaml")
+            # st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
