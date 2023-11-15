@@ -65,7 +65,6 @@ with st.expander(label='Form'):
             ink = ink_choice(index)
             ink_types.append(ink)
 
-
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
     submit_button = st.button(label='Submit', use_container_width=True)
 
