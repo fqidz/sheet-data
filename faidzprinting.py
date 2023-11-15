@@ -38,14 +38,11 @@ with st.form(key="printing_input"):
     # form
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
     
-
     ink_type = st.radio(
     "Select Ink Type :red[\*]",
     ["Colored", "Black & White"],
     captions = ["100 fils per page", "50 fils per page"],
     index=None)
-
-    
 
     uploaded_file = st.file_uploader(label='''PDF File :red[\*]''', type=["pdf"])
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
@@ -93,7 +90,6 @@ with st.form(key="printing_input"):
             )
 
 
-
             # append to google sheets
             sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
             ws = sh.worksheet("Sheet1") # get the worksheet
@@ -111,7 +107,7 @@ with st.form(key="printing_input"):
 
             total_price = 'BHD {:.3f}'.format(total_price)
             
-            summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}\nTotal Price: {}'''.format(uploaded_file.name, ink_type, no_of_pages, total_price)
 
+            summary = '''Filename: {}\nInk Type: {}\nNo. of Pages: {}\nTotal Price: {}'''.format(uploaded_file.name, ink_type, no_of_pages, total_price)
             st.code(summary,language="yaml")
             st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
