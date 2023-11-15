@@ -5,6 +5,7 @@
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
 ## allow upload multiple files
 ##      maybe by allowing them to have multiple forms
+## referral promo thingy -> need login i think
 
 import streamlit as st
 import pandas as pd
