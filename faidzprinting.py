@@ -78,6 +78,7 @@ with st.form(key="printing_input"):
                     {
                         "Date": date_now,
                         "Printed": "NO",
+                        "Paid": "NO",
                         "Name": name,
                         "File Name": uploaded_file.name,
                         "File Link": file_link,
