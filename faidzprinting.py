@@ -114,5 +114,3 @@ with st.form(key="printing_input"):
 
             st.code(summary,language="yaml")
             st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
-
-            
