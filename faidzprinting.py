@@ -49,7 +49,7 @@ def ink_choice(key):
     return {'value': ink_type}
 
 
-with st.expander(label='Form'):
+with st.expander(label='Form', expanded=True):
     
     # name input
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
