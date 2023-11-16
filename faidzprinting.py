@@ -75,7 +75,7 @@ with st.expander(label='Form', expanded=True):
     
     # initialize variables
     progress_text = 'Loading...'
-    progress = 1
+    progress = 0.01
 
     total_price = 0
     total_colored = 0
