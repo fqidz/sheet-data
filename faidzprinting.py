@@ -69,6 +69,9 @@ with st.expander(label='Form'):
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
     submit_button = st.button(label='Submit', use_container_width=True)
 
+    total_price = 0
+    total_colored = 0
+    total_black_and_white = 0
     date_now = datetime.today().strftime('%Y-%m-%d')
     #initialize summary table dict
     summary_table = {'Filename': [], 'Ink type': [], 'No. of Pages': []}
@@ -87,8 +90,8 @@ with st.expander(label='Form'):
                 folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
                 gfile = drive.CreateFile({"title": current_file.name, "parents": [{"id": folder_id}]})
                 gfile.SetContentFile(temp.name)
-                gfile.Upload()
-                file_link = gfile['alternateLink']
+                # gfile.Upload()
+                # file_link = gfile['alternateLink']
                 # add loading bar
 
                 with open(temp.name, 'rb'):
@@ -105,7 +108,7 @@ with st.expander(label='Form'):
                             "Paid": "NO",
                             "Name": name,
                             "File Name": current_file.name,
-                            "File Link": file_link,
+                            "File Link": 'file_link',
                             "Colored": no_of_pages if ink_types_value['value'] == "Colored" else 0,
                             "B & W": no_of_pages if ink_types_value['value'] != "Colored" else 0,
                             "Note": note
@@ -115,18 +118,19 @@ with st.expander(label='Form'):
                 )
 
                 # append to google sheets
-                sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
-                ws = sh.worksheet("Sheet1") # get the worksheet
-                existing = gd.get_as_dataframe(ws) # get the existing data as a DataFrame
-                updated = existing.append(printing_input) # append the new data to the existing data
-                gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
+                # sh = gc.open("COPY_PRINTING BUSINESS!!!1") # link sheets
+                # ws = sh.worksheet("Sheet1") # get the worksheet
+                # existing = gd.get_as_dataframe(ws) # get the existing data as a DataFrame
+                # updated = existing.append(printing_input) # append the new data to the existing data
+                # gd.set_with_dataframe(ws, updated) # update the worksheet with the updated data
 
                 #calculate price
-                if ink_types == "Colored":
-                    total_price = (no_of_pages * 100)/1000
+                if ink_types_value['value'] == "Colored":
+                    total_colored += no_of_pages
+                    total_price += (no_of_pages * 100)/1000
                 else:
-                    total_price = (no_of_pages * 50)/1000
-                total_price = 'BHD {:.3f}'.format(total_price)
+                    total_black_and_white += no_of_pages
+                    total_price += (no_of_pages * 50)/1000
 
                 # append the info to the summary table dict
                 summary_table_row = [current_file.name, ink_types_value['value'], no_of_pages]
@@ -135,7 +139,23 @@ with st.expander(label='Form'):
                 summary_table['No. of Pages'].append(summary_table_row[2])
 
             st.divider()
+
+            total_price = 'BHD {:.3f}'.format(total_price)
+
             st.write('Summary:')
             summary_table_dataframe = pd.DataFrame(summary_table)
-            st.table(summary_table)
-            st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
+            st.dataframe(summary_table, hide_index=True)
+            st.dataframe(
+                [
+                    {
+                        'Total Colored Pages': total_colored,
+                        'Total Black & White Pages': total_black_and_white,
+                        'Total Price': total_price
+                    }
+                ]
+            )
+
+            if len(uploaded_file) == 1:
+                st.success("Your file has been recieved and will be printed as soon as possible.\n Thank you! 😊")
+            else:
+                st.success("Your files have been recieved and will be printed as soon as possible.\n Thank you! 😊")
