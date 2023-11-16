@@ -18,6 +18,7 @@ from tempfile import NamedTemporaryFile
 from datetime import datetime
 import pypdf
 import time
+import math
 
 
 gauth = GoogleAuth()
@@ -115,8 +116,10 @@ with st.expander(label='Form', expanded=True):
                     no_of_pages = len(pdfReader.pages)
 
                 # increment progress bar
-                progress_bar.progress(progress + (100/len(uploaded_files))/100, 'Uploading files to Google Drive...')
-                progress += (100/len(uploaded_files))/100                
+                increment_amount = round((100/len(uploaded_files))/100,2)
+                progress += increment_amount
+                progress_bar.progress(progress, "Uploading '{}'...".format(current_file.name))
+                
                 
                 # create dataframe table row with all the data
                 ink_types_value = ink_types[index]
