@@ -44,6 +44,7 @@ def ink_choice(key):
     "{} :red[\*]".format(single_file.name),
     ["Colored", "Black & White"],
     index=None,key=key)
+    return {'key': key}
 
 
 with st.expander(label='Form'):
