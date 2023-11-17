@@ -119,7 +119,7 @@ with st.expander(label='Form', expanded=True):
                     no_of_pages = len(pdfReader.pages)
 
                 # increment progress bar
-                increment_amount = round((100/len(uploaded_files))/100,2)
+                increment_amount = round((80/len(uploaded_files))/100,2)
                 progress += increment_amount
                 progress_bar.progress(progress, "Uploading '{}'...".format(current_file.name))
                 
@@ -165,7 +165,9 @@ with st.expander(label='Form', expanded=True):
                 summary_table['No. of Pages'].append(summary_table_row[2])
 
             # remove progress bar
-            progress_bar.progress(1.0,'Files sent')
+            progress_bar.progress(0.9,'Files sent')
+            time.sleep(1)
+            progress_bar.progress(1.0,'Notification sent')
             time.sleep(1)
             progress_bar.empty()
 
@@ -196,4 +198,4 @@ with st.expander(label='Form', expanded=True):
             # send out notif
             total_pages = total_black_and_white + total_colored
             sheets_link = '''https://docs.google.com/spreadsheets/d/1Mxy5GcWbqB8TotikM2K19Bc3dulae7WlMcJMc9JFtnM/edit#gid=0'''
-            notify.send("'{}' requested a print: {} file(s), {} total pages, {} total price".format(name, len(uploaded_files), total_pages, total_price), sheets_link)
+            notify.send("'{}' requested a print: {} file(s), {} total pages, {} total".format(name, len(uploaded_files), total_pages, total_price), sheets_link)
