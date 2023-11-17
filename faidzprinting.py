@@ -72,25 +72,26 @@ with st.expander(label='Form', expanded=True):
             ink = ink_choice(index)
             ink_types.append(ink)
 
-    # note input
+    # get note from user
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
+    
     # submit button
     submit_button = st.button(label='Submit', use_container_width=True)
     
     # initialize variables
     progress_text = 'Loading...'
     progress = 0
-
     total_price = 0
     total_colored = 0
     total_black_and_white = 0
-
+    
+    # get current date
     date_now = datetime.today().strftime('%Y-%m-%d')
 
     #initialize summary table dict
     summary_table = {'Filename': [], 'Ink type': [], 'No. of Pages': []}
 
-    # when submit button click
+    # handle submit button click
     if submit_button:
         # check if required info is filled
         if not name or not uploaded_files or any(i['value'] == None for i in ink_types):
@@ -110,7 +111,6 @@ with st.expander(label='Form', expanded=True):
                 gfile = drive.CreateFile({"title": current_file.name, "parents": [{"id": folder_id}]})
                 gfile.SetContentFile(temp.name)
                 gfile.Upload()
-                # get file link
                 file_link = gfile['alternateLink']
 
                 # get no. of pages
