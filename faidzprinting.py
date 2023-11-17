@@ -1,11 +1,13 @@
 ## TODO
 ## fix discord embed
 ## customize shit or something
-## email notifs
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
 ##      maybe by allowing them to have multiple forms
 ## referral promo thingy -> need login i think
 ## place image of pdf on top of ink type choice
+## batch append multiple files to ggl sheet instead of sending it one by one
+## async loading bar
+## replace notify-run with a discord bot message or something
 
 import streamlit as st
 import pandas as pd
@@ -18,8 +20,9 @@ from tempfile import NamedTemporaryFile
 from datetime import datetime
 import pypdf
 import time
-import math
+from notify_run import Notify
 
+notify = Notify(endpoint='https://notify.run/2Fd53sAz0peQHswvOznO')
 
 gauth = GoogleAuth()
 scope = ["https://www.googleapis.com/auth/drive"]
@@ -162,6 +165,7 @@ with st.expander(label='Form', expanded=True):
                 summary_table['No. of Pages'].append(summary_table_row[2])
 
             # remove progress bar
+            progress_bar.progress(1.0,'Files sent')
             time.sleep(1)
             progress_bar.empty()
 
@@ -188,3 +192,8 @@ with st.expander(label='Form', expanded=True):
                     }
                 ]
             )
+
+            # send out notif
+            total_pages = total_black_and_white + total_colored
+            sheets_link = '''https://docs.google.com/spreadsheets/d/1Mxy5GcWbqB8TotikM2K19Bc3dulae7WlMcJMc9JFtnM/edit#gid=0'''
+            notify.send("'{}' requested a print: {} file(s), {} total pages, {} total price".format(name, len(uploaded_files), total_pages, total_price), sheets_link)
