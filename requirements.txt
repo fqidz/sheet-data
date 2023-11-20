@@ -4,3 +4,4 @@ st-gsheets-connection
 pydrive2
 oauth2client
 pypdf
+notify-run
