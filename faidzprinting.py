@@ -16,7 +16,7 @@ import streamlit as st
 import pandas as pd
 import gspread as gs
 import gspread_dataframe as gd
-from pydrive2.auth import GoogleAuth as ga
+from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 import pypdf
@@ -24,6 +24,7 @@ from notify_run import Notify
 
 notify = Notify(endpoint='https://notify.run/2Fd53sAz0peQHswvOznO')
 
+ga = GoogleAuth()
 SCOPE = ["https://www.googleapis.com/auth/drive"]
 ga.credentials = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gsheets"]["sheet_service_account"], SCOPE)
 gc = gs.authorize(ga.credentials) # link service acc
