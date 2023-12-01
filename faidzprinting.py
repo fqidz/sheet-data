@@ -9,27 +9,26 @@
 ## async loading bar
 ## replace notify-run with a discord bot message or something
 
+from tempfile import NamedTemporaryFile
+from datetime import datetime
+import time
 import streamlit as st
 import pandas as pd
 import gspread as gs
 import gspread_dataframe as gd
-from pydrive2.auth import GoogleAuth
+from pydrive2.auth import GoogleAuth as ga
 from pydrive2.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
-from tempfile import NamedTemporaryFile
-from datetime import datetime
 import pypdf
-import time
 from notify_run import Notify
 
 notify = Notify(endpoint='https://notify.run/2Fd53sAz0peQHswvOznO')
 
-gauth = GoogleAuth()
-scope = ["https://www.googleapis.com/auth/drive"]
-gauth.credentials = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gsheets"]["sheet_service_account"], scope)
-gc = gs.authorize(gauth.credentials) # link service acc
+SCOPE = ["https://www.googleapis.com/auth/drive"]
+ga.credentials = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gsheets"]["sheet_service_account"], SCOPE)
+gc = gs.authorize(ga.credentials) # link service acc
 
-drive = GoogleDrive(gauth)
+drive = GoogleDrive(ga)
 
 st.set_page_config(page_title="Faidz Printing", page_icon=":printer:", layout="centered")
 
@@ -45,23 +44,24 @@ st.info("11/16/2023 - You can now upload multiple files! 🎉")
 # --- FORM SECTION ---
 
 # ink choice radio button
-def ink_choice(key):    
+def ink_choice(key):
+    """Creates a new button"""
     ink_type = st.radio(
-    "{} :red[\*]".format(single_file.name),
+    f"{single_file.name} :red[\*]",
     ["Colored", "Black & White"],
     index=None,key=key)
     return {'value': ink_type}
 
 
 with st.expander(label='Form', expanded=True):
-    
+
     # name input
     name = st.text_input(label='''Name :red[\*]''', placeholder="eg. Faidz Arante")
     # upload file
     uploaded_files = st.file_uploader(label='''PDF File(s) :red[\*]''', type=["pdf"],accept_multiple_files=True)
-    
+
     # ink type choice
-    st.write('Choose Ink Type:')    
+    st.write('Choose Ink Type:')
     col1, col2, col3 = st.columns(3)
     columns = [col1, col2, col3]
     ink_types = []
@@ -74,17 +74,17 @@ with st.expander(label='Form', expanded=True):
 
     # get note from user
     note = st.text_input(label="Note", placeholder="eg. range of pages to print, special requests, etc.")
-    
+
     # submit button
     submit_button = st.button(label='Submit', use_container_width=True)
-    
+
     # initialize variables
     progress_text = 'Loading...'
     progress = 0
     total_price = 0
     total_colored = 0
     total_black_and_white = 0
-    
+
     # get current date
     date_now = datetime.today().strftime('%Y-%m-%d')
 
@@ -94,21 +94,21 @@ with st.expander(label='Form', expanded=True):
     # handle submit button click
     if submit_button:
         # check if required info is filled
-        if not name or not uploaded_files or any(i['value'] == None for i in ink_types):
+        if not name or not uploaded_files or any(i['value'] is None for i in ink_types):
             st.warning("Please fill in the required information.")
             st.stop()
         else:
             # show progress bar
             progress_bar = st.progress(progress, progress_text)
-            
+        
             # loop through all uploaded files
             for index, current_file in enumerate(uploaded_files):
-                
+            
                 # upload file to gdrive
                 with NamedTemporaryFile(delete=False) as temp:
                     temp.write(current_file.getvalue())
-                folder_id = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
-                gfile = drive.CreateFile({"title": current_file.name, "parents": [{"id": folder_id}]})
+                FOLDER_ID = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
+                gfile = drive.CreateFile({"title": current_file.name, "parents": [{"id": FOLDER_ID}]})
                 gfile.SetContentFile(temp.name)
                 gfile.Upload()
                 file_link = gfile['alternateLink']
@@ -121,9 +121,8 @@ with st.expander(label='Form', expanded=True):
                 # increment progress bar
                 increment_amount = round((80/len(uploaded_files))/100,2)
                 progress += increment_amount
-                progress_bar.progress(progress, "Uploading '{}'...".format(current_file.name))
-                
-                
+                progress_bar.progress(progress, f"Uploading '{current_file.name}'...")
+                                
                 # create dataframe table row with all the data
                 ink_types_value = ink_types[index]
                 printing_input = pd.DataFrame(
@@ -171,7 +170,7 @@ with st.expander(label='Form', expanded=True):
             time.sleep(1)
             progress_bar.empty()
 
-            total_price = 'BHD {:.3f}'.format(total_price)
+            total_price = f'BHD {total_price:.3f}'
 
             # success message; grammar
             if len(uploaded_files) == 1:
@@ -197,5 +196,5 @@ with st.expander(label='Form', expanded=True):
 
             # send out notif
             total_pages = total_black_and_white + total_colored
-            sheets_link = '''https://docs.google.com/spreadsheets/d/1Mxy5GcWbqB8TotikM2K19Bc3dulae7WlMcJMc9JFtnM/edit#gid=0'''
-            notify.send("'{}' requested a print: {} file(s), {} total pages, {} total".format(name, len(uploaded_files), total_pages, total_price), sheets_link)
+            SHEETS_LINK = '''https://docs.google.com/spreadsheets/d/1Mxy5GcWbqB8TotikM2K19Bc3dulae7WlMcJMc9JFtnM/edit#gid=0'''
+            notify.send(f"'{name}' requested a print: {len(uploaded_files)} file(s), {total_pages} total pages, {total_price} total", SHEETS_LINK)
