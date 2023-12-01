@@ -2,12 +2,12 @@
 ## fix discord embed
 ## customize shit or something
 ## replace append thingies with concat https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.map.html#pandas.io.formats.style.Styler.map
-##      maybe by allowing them to have multiple forms
 ## referral promo thingy -> need login i think
 ## place image of pdf on top of ink type choice
 ## batch append multiple files to ggl sheet instead of sending it one by one
 ## async loading bar
 ## replace notify-run with a discord bot message or something
+## figure out a way to select half half pages
 
 from tempfile import NamedTemporaryFile
 from datetime import datetime
