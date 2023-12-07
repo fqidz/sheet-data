@@ -106,18 +106,20 @@ with st.expander(label='Form', expanded=True):
             for index, current_file in enumerate(uploaded_files):
             
                 # upload file to gdrive
-                with NamedTemporaryFile(delete=False) as temp:
-                    temp.write(current_file.getvalue())
+                with NamedTemporaryFile(delete=False) as tempFile:
+                    tempFile.write(current_file.getvalue())
                 FOLDER_ID = "1qBfLSQVBMJgpbgXa7h6YdAbT3AJv_sCe" #'print' folder
                 gfile = drive.CreateFile({"title": current_file.name, "parents": [{"id": FOLDER_ID}]})
-                gfile.SetContentFile(temp.name)
+                gfile.SetContentFile(tempFile.name)
                 gfile.Upload()
                 file_link = gfile['alternateLink']
 
                 # get no. of pages
-                with open(temp.name, 'rb'):
-                    pdfReader = pypdf.PdfReader(current_file)
-                    no_of_pages = len(pdfReader.pages)
+                def pdfNoPages():
+                    with open(tempFile.name, 'rb'):
+                        pdfReader = pypdf.PdfReader(current_file)
+                        no_of_pages = len(pdfReader.pages)
+                    return no_of_pages
 
                 # increment progress bar
                 increment_amount = round((80/len(uploaded_files))/100,2)
