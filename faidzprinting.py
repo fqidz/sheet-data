@@ -40,7 +40,6 @@ st.title("Printing Form")
 # --- CONTENT ---
 ## TODO
 
-st.info("11/16/2023 - You can now upload multiple files! 🎉")
 
 # --- FORM SECTION ---
 
