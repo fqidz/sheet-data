@@ -49,6 +49,7 @@ def ink_choice(key):
     ink_type = st.radio(
     f"{single_file.name} :red[\*]",
     ["Colored", "Black & White"],
+    captions=["100 fils/page", "50 fils/page"],
     index=None,key=key)
     return {'value': ink_type}
 
